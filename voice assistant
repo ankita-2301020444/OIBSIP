@@ -1,0 +1,46 @@
+import speech_recognition as sr
+import pyttsx3
+import datetime
+import webbrowser
+
+
+engine = pyttsx3.init()
+
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+def get_command():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Say something...")
+        audio = recognizer.listen(source)
+    
+    try:
+        command = recognizer.recognize_google(audio)
+        print("You said:", command)
+        return command.lower()
+    except:
+        speak("Sorry, I did not catch that.")
+        return ""
+
+def run_assistant():
+    command = get_command()
+
+    if "hello" in command:
+        speak("Hello! How can I help you?")
+    
+    elif "time" in command:
+        time = datetime.datetime.now().strftime("%I:%M %p")
+        speak("The time is " + time)
+    
+    elif "search" in command:
+        search_query = command.replace("search", "")
+        speak("Searching for " + search_query)
+        webbrowser.open("https://www.google.com/search?q=" + search_query)
+    
+    else:
+        speak("I don't understand that command.")
+
+# Run the assistant
+run_assistant()
